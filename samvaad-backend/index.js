@@ -19,7 +19,10 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: 'http://localhost:5173',
+    origin: [
+      'http://localhost:5173',                // Local development
+      'https://samvaad-woad.vercel.app'       // Deployed Vercel frontend
+    ],
     methods: ["GET", "POST"]
   }
 });
@@ -34,8 +37,11 @@ mongoose.connect(process.env.MONGO_URI, {
 
 // CORS setup for frontend
 app.use(cors({
-  origin: 'http://localhost:5173',
-  credentials: true
+  origin: [
+    'http://localhost:5173', // for local frontend dev (Vite default)
+    'https://samvaad-woad.vercel.app' // for production frontend
+  ],
+  credentials: true // if you use cookies/auth
 }));
 app.use(express.json());
 
