@@ -1,4 +1,4 @@
-# Samvaad – Social Wellness Platform
+# Samvaad – Social Wellness Platform by Daya Vats
 
 Welcome to **Samvaad**, a progressive web app (PWA) for emotional wellness, support, and community. Samvaad lets you connect with counselors and peers, share stories, chat in real time, and access motivational content.
 
