@@ -14,10 +14,12 @@ function Share() {
     fetchStories();
   }, []);
 
+  const apiBaseUrl = import.meta.env.VITE_API_URL;
+
   const fetchStories = async () => {
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/stories');
+      const res = await fetch(`${apiBaseUrl}/stories`);
       const data = await res.json();
       setStories(data);
     } catch (err) {
@@ -42,7 +44,7 @@ function Share() {
     }
     setSubmitting(true);
     try {
-      const res = await fetch('http://localhost:5000/stories', {
+      const res = await fetch(`${apiBaseUrl}/stories`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

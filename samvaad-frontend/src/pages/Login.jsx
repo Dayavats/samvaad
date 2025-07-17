@@ -23,7 +23,8 @@ function Login({ onLogin }) {
     }
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/login', {
+      const apiBaseUrl = import.meta.env.VITE_API_URL;
+      const res = await fetch(`${apiBaseUrl}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),

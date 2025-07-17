@@ -24,11 +24,13 @@ const AdminDashboard = () => {
   const [storyPage, setStoryPage] = useState(1);
   const ITEMS_PER_PAGE = 10;
 
+  const apiBaseUrl = import.meta.env.VITE_API_URL;
+
   const fetchUsers = async () => {
     try {
       setLoading(true);
       setError(null);
-      const res = await fetch('/users', {
+      const res = await fetch(`${apiBaseUrl}/users`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error('Failed to fetch users');
@@ -44,7 +46,7 @@ const AdminDashboard = () => {
   const fetchPosts = async () => {
     try {
       setPostsLoading(true);
-      const res = await fetch('/posts');
+      const res = await fetch(`${apiBaseUrl}/posts`);
       if (!res.ok) throw new Error('Failed to fetch posts');
       const data = await res.json();
       setPosts(data);
@@ -58,7 +60,7 @@ const AdminDashboard = () => {
   const fetchStories = async () => {
     try {
       setStoriesLoading(true);
-      const res = await fetch('/stories');
+      const res = await fetch(`${apiBaseUrl}/stories`);
       if (!res.ok) throw new Error('Failed to fetch stories');
       const data = await res.json();
       setStories(data);
@@ -82,7 +84,7 @@ const AdminDashboard = () => {
     setActionLoading(user._id);
     setSuccess(null);
     try {
-      const res = await fetch(`/users/${user._id}/role`, {
+      const res = await fetch(`${apiBaseUrl}/users/${user._id}/role`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -107,7 +109,7 @@ const AdminDashboard = () => {
     setActionLoading(user._id);
     setSuccess(null);
     try {
-      const res = await fetch(`/users/${user._id}/role`, {
+      const res = await fetch(`${apiBaseUrl}/users/${user._id}/role`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -131,7 +133,7 @@ const AdminDashboard = () => {
     setActionLoading(user._id);
     setSuccess(null);
     try {
-      const res = await fetch(`/users/${user._id}/ban`, {
+      const res = await fetch(`${apiBaseUrl}/users/${user._id}/ban`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -156,7 +158,7 @@ const AdminDashboard = () => {
     setActionLoading(post._id);
     setSuccess(null);
     try {
-      const res = await fetch(`/posts/${post._id}`, {
+      const res = await fetch(`${apiBaseUrl}/posts/${post._id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -175,7 +177,7 @@ const AdminDashboard = () => {
     setActionLoading(story._id);
     setSuccess(null);
     try {
-      const res = await fetch(`/stories/${story._id}`, {
+      const res = await fetch(`${apiBaseUrl}/stories/${story._id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -195,7 +197,7 @@ const AdminDashboard = () => {
     setActionLoading(post._id + '-flag');
     setSuccess(null);
     try {
-      const res = await fetch(`/posts/${post._id}/flag`, {
+      const res = await fetch(`${apiBaseUrl}/posts/${post._id}/flag`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ flagged }),
@@ -215,7 +217,7 @@ const AdminDashboard = () => {
     setActionLoading(story._id + '-flag');
     setSuccess(null);
     try {
-      const res = await fetch(`/stories/${story._id}/flag`, {
+      const res = await fetch(`${apiBaseUrl}/stories/${story._id}/flag`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ flagged }),

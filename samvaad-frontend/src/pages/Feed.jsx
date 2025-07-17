@@ -9,6 +9,8 @@ function Feed() {
   const [newPost, setNewPost] = useState({ text: '', image: '', tags: '' });
   const [submitting, setSubmitting] = useState(false);
 
+  const apiBaseUrl = import.meta.env.VITE_API_URL;
+
   // Fetch posts from backend
   useEffect(() => {
     fetchPosts();
@@ -16,7 +18,7 @@ function Feed() {
 
   const fetchPosts = async () => {
     try {
-      const response = await fetch('http://localhost:5000/posts');
+      const response = await fetch(`${apiBaseUrl}/posts`);
       const data = await response.json();
       setPosts(data);
     } catch (error) {
@@ -32,7 +34,7 @@ function Feed() {
 
     setSubmitting(true);
     try {
-      const response = await fetch('http://localhost:5000/posts', {
+      const response = await fetch(`${apiBaseUrl}/posts`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

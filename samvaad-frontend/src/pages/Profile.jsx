@@ -15,10 +15,12 @@ function Profile() {
     // eslint-disable-next-line
   }, []);
 
+  const apiBaseUrl = import.meta.env.VITE_API_URL;
+
   const fetchProfile = async () => {
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/me', {
+      const res = await fetch(`${apiBaseUrl}/me`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -42,7 +44,7 @@ function Profile() {
     setSuccess('');
     setSaving(true);
     try {
-      const res = await fetch('http://localhost:5000/me', {
+      const res = await fetch(`${apiBaseUrl}/me`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

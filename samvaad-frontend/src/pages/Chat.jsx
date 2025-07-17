@@ -20,12 +20,13 @@ function Chat() {
   const [users, setUsers] = useState([]);
   const [userSearch, setUserSearch] = useState('');
   const messagesEndRef = useRef(null);
+  const apiBaseUrl = import.meta.env.VITE_API_URL;
 
   // Fetch conversations on mount
   useEffect(() => {
     if (!token) return;
     setLoadingConvs(true);
-    fetch('http://localhost:5000/conversations', {
+    fetch(`${apiBaseUrl}/conversations`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => res.json())
@@ -37,7 +38,7 @@ function Chat() {
   useEffect(() => {
     if (!selectedConv || !token) return;
     setLoadingMsgs(true);
-    fetch(`http://localhost:5000/conversations/${selectedConv._id}/messages`, {
+    fetch(`${apiBaseUrl}/conversations/${selectedConv._id}/messages`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => res.json())
@@ -66,7 +67,7 @@ function Chat() {
   const openUserModal = () => {
     setShowUserModal(true);
     setUserSearch('');
-    fetch('http://localhost:5000/users', {
+    fetch(`${apiBaseUrl}/users`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => res.json())
@@ -84,7 +85,7 @@ function Chat() {
       return;
     }
     // Create new conversation
-    const res = await fetch('http://localhost:5000/conversations', {
+    const res = await fetch(`${apiBaseUrl}/conversations`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
