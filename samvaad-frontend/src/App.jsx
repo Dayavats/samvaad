@@ -1,6 +1,5 @@
 import './App.css'
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate, Navigate } from 'react-router-dom';
-import Home from './pages/Home';
 import Feed from './pages/Feed';
 import Chat from './pages/Chat';
 import Share from './pages/Share';
@@ -16,7 +15,6 @@ function AppNav() {
   const { user, logout } = useAuth();
   return (
     <nav className="app-nav">
-      <Link to="/">Home</Link>
       {user && <Link to="/feed">Feed</Link>}
       {user && <Link to="/chat">Chat</Link>}
       {user && <Link to="/share">Share</Link>}
@@ -44,7 +42,7 @@ function AppRoutes() {
   return (
     <main>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<PrivateRoute><Feed /></PrivateRoute>} />
         <Route path="/feed" element={<PrivateRoute><Feed /></PrivateRoute>} />
         <Route path="/chat" element={<PrivateRoute><Chat /></PrivateRoute>} />
         <Route path="/share" element={<PrivateRoute><Share /></PrivateRoute>} />

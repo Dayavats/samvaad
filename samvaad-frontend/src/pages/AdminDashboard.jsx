@@ -30,13 +30,17 @@ const AdminDashboard = () => {
     try {
       setLoading(true);
       setError(null);
-      const res = await fetch(`${apiBaseUrl}/users`, {
+      console.log('Fetching users...');
+      const res = await fetch(`${apiBaseUrl}/admin/users`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      console.log('Users fetch response:', res);
       if (!res.ok) throw new Error('Failed to fetch users');
       const data = await res.json();
+      console.log('Users data:', data);
       setUsers(data);
     } catch (err) {
+      console.error('Error fetching users:', err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -46,11 +50,15 @@ const AdminDashboard = () => {
   const fetchPosts = async () => {
     try {
       setPostsLoading(true);
+      console.log('Fetching posts...');
       const res = await fetch(`${apiBaseUrl}/posts`);
+      console.log('Posts fetch response:', res);
       if (!res.ok) throw new Error('Failed to fetch posts');
       const data = await res.json();
+      console.log('Posts data:', data);
       setPosts(data);
     } catch (err) {
+      console.error('Error fetching posts:', err);
       setError(err.message);
     } finally {
       setPostsLoading(false);
@@ -60,11 +68,15 @@ const AdminDashboard = () => {
   const fetchStories = async () => {
     try {
       setStoriesLoading(true);
+      console.log('Fetching stories...');
       const res = await fetch(`${apiBaseUrl}/stories`);
+      console.log('Stories fetch response:', res);
       if (!res.ok) throw new Error('Failed to fetch stories');
       const data = await res.json();
+      console.log('Stories data:', data);
       setStories(data);
     } catch (err) {
+      console.error('Error fetching stories:', err);
       setError(err.message);
     } finally {
       setStoriesLoading(false);

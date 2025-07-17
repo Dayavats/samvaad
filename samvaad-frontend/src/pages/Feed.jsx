@@ -8,6 +8,8 @@ function Feed() {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [newPost, setNewPost] = useState({ text: '', image: '', tags: '' });
   const [submitting, setSubmitting] = useState(false);
+  const [commentText, setCommentText] = useState({}); // postId -> text
+  const [actionMessage, setActionMessage] = useState('');
 
   const apiBaseUrl = import.meta.env.VITE_API_URL;
 
@@ -60,8 +62,48 @@ function Feed() {
     }
   };
 
+  const handleLikePost = async (postId) => {
+    await fetch(`${apiBaseUrl}/posts/${postId}/like`, {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    setActionMessage('Post liked!');
+    setTimeout(() => setActionMessage(''), 1500);
+    fetchPosts();
+  };
+
+  const handleAddComment = async (postId) => {
+    if (!commentText[postId]) return;
+    await fetch(`${apiBaseUrl}/posts/${postId}/comments`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ text: commentText[postId] })
+    });
+    setCommentText((prev) => ({ ...prev, [postId]: '' }));
+    setActionMessage('Comment added!');
+    setTimeout(() => setActionMessage(''), 1500);
+    fetchPosts();
+  };
+
+  const handleFlagPost = async (postId) => {
+    await fetch(`${apiBaseUrl}/posts/${postId}/flag`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ flagged: true })
+    });
+    setActionMessage('Thanks for reporting!');
+    setTimeout(() => setActionMessage(''), 1500);
+    fetchPosts();
+  };
+
   if (loading) {
-    return <div className="feed-loading">Loading posts...</div>;
+    return <div className="feed-loading"><div className="spinner"></div>Loading posts...</div>;
   }
 
   return (
@@ -104,6 +146,8 @@ function Feed() {
         </form>
       )}
 
+      {actionMessage && <div className="feed-action-message">{actionMessage}</div>}
+
       <div className="posts-container">
         {posts.length === 0 ? (
           <div className="no-posts">No posts yet. Be the first to share something motivational!</div>
@@ -133,8 +177,30 @@ function Feed() {
                 </div>
               )}
               <div className="post-actions">
-                <span className="likes-count">{post.likes?.length || 0} likes</span>
-                <span className="comments-count">{post.comments?.length || 0} comments</span>
+                <button onClick={() => handleLikePost(post._id)} className="feed-like-btn">
+                  {post.likes && user && post.likes.includes(user.id) ? 'Unlike' : 'Like'}
+                </button>
+                <span>{post.likes?.length || 0} likes</span>
+                {/* Comments */}
+                <ul className="feed-comments">
+                  {post.comments && post.comments.map(c => (
+                    <li key={c._id || c.createdAt}>
+                      <b>{c.author?.name || 'User'}:</b> {c.text}
+                    </li>
+                  ))}
+                </ul>
+                <form onSubmit={e => { e.preventDefault(); handleAddComment(post._id); }} className="feed-comment-form">
+                  <input
+                    value={commentText[post._id] || ''}
+                    onChange={e => setCommentText(prev => ({ ...prev, [post._id]: e.target.value }))}
+                    placeholder="Add a comment..."
+                  />
+                  <button type="submit" className="feed-comment-btn">Comment</button>
+                </form>
+                {user && user.role !== 'admin' && !post.flagged && (
+                  <button onClick={() => handleFlagPost(post._id)} className="feed-flag-btn">Report</button>
+                )}
+                {post.flagged && <span className="feed-flagged">Flagged</span>}
               </div>
             </div>
           ))
@@ -145,3 +211,52 @@ function Feed() {
 }
 
 export default Feed;
+
+<style>{`
+.feed-like-btn, .feed-comment-btn, .feed-flag-btn {
+  margin: 0 6px 0 0;
+  padding: 4px 12px;
+  border-radius: 6px;
+  border: none;
+  background: #e3f2fd;
+  color: #1976d2;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.feed-like-btn:hover, .feed-comment-btn:hover, .feed-flag-btn:hover {
+  background: #1976d2;
+  color: #fff;
+}
+.feed-action-message {
+  background: #e8f5e9;
+  color: #388e3c;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  margin: 1rem 0;
+  text-align: center;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.feed-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 2rem 0;
+  font-size: 1.2rem;
+  color: #1976d2;
+}
+.spinner {
+  border: 4px solid #e3f2fd;
+  border-top: 4px solid #1976d2;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+`}</style>
