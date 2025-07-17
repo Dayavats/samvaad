@@ -398,6 +398,51 @@ app.put('/stories/:id/flag', auth, async (req, res) => {
   }
 });
 
+// Like or unlike a post
+app.put('/posts/:id/like', auth, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json({ message: 'Post not found' });
+    const index = post.likes.indexOf(userId);
+    if (index === -1) {
+      post.likes.push(userId);
+    } else {
+      post.likes.splice(index, 1);
+    }
+    await post.save();
+    res.json(post);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error.' });
+  }
+});
+
+// Add a comment to a post
+app.post('/posts/:id/comments', auth, async (req, res) => {
+  try {
+    const { text } = req.body;
+    if (!text) return res.status(400).json({ message: 'Comment text required' });
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json({ message: 'Post not found' });
+    const comment = { text, author: req.user.id };
+    post.comments.push(comment);
+    await post.save();
+    res.json(post);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error.' });
+  }
+});
+
+// Admin: Get all users (for admin dashboard)
+app.get('/admin/users', auth, adminOnly, async (req, res) => {
+  try {
+    const users = await User.find({}, 'name email role');
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error.' });
+  }
+});
+
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
