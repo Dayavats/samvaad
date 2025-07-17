@@ -10,7 +10,8 @@ export function ChatSocketProvider({ children }) {
 
   useEffect(() => {
     if (token) {
-      const s = io('http://localhost:5000', {
+      const apiBaseUrl = import.meta.env.VITE_API_URL;
+      const s = io(apiBaseUrl, {
         auth: { token },
         autoConnect: true,
         transports: ['websocket'],
